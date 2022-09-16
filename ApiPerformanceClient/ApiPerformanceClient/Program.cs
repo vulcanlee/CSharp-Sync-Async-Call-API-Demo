@@ -10,9 +10,9 @@ namespace ApiPerformanceClient
     class Program
     {
         // 使用該 URL 可以調整 ASP.NET 上的執行緒集區設定
-        // https://lobworkshop.azurewebsites.net/api/RemoteService/SetThreadPool/250/250/
+        // https://blazortw.azurewebsites.net/api/RemoteService/SetThreadPool/250/250/
         // https://localhost:7034/api/RemoteService/
-        static string APIServiceName = "localhost:7034";
+        static string APIServiceName = "blazortw.azurewebsites.net";
         static int 模擬兩數相加計算時間 = 3000;
         static int 最多同時呼叫API數量 = 100;
 

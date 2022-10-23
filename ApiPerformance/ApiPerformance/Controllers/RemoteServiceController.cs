@@ -38,7 +38,7 @@ namespace ApiPerformance.Controllers
             DateTime Complete = DateTime.Now;
             string result= $"Result:{sum} " +
                 $"AW:{workerThreadsAvailable} AC:{completionPortThreadsAvailable}" +
-             $" ({Begin:ss} - {Complete:ss} = {(Complete - Begin).TotalSeconds})";
+             $" Begin:{Begin:HH:mm:ss}({Begin:ss} - {Complete:ss} = {(Complete - Begin).TotalSeconds})";
             // 這行敘述將模擬將此次 API 呼叫記錄在伺服器上
             Console.WriteLine($"{result}");
             return result;

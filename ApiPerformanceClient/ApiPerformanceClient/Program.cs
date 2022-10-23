@@ -10,14 +10,15 @@ namespace ApiPerformanceClient
     class Program
     {
         // 使用該 URL 可以調整 ASP.NET 上的執行緒集區設定
-        // https://blazortw.azurewebsites.net/api/RemoteService/SetThreadPool/250/250/
+        // https://blazortw.azurewebsites.net/api/RemoteService/SetThreadPool/4/4/
         // https://localhost:7034/api/RemoteService/
         static string APIServiceName = "blazortw.azurewebsites.net";
         static int 模擬兩數相加計算時間 = 3000;
         static int 最多同時呼叫API數量 = 100;
 
         // 此 URL 是要連上 Azure 上的 Web API 測試端點
-        static string APIEndPoint = $"https://{APIServiceName}/api/RemoteService/AddASync/8/9/{模擬兩數相加計算時間}";
+        static string APIEndPoint = $"https://{APIServiceName}/api/" +
+            $"RemoteService/AddSync/8/9/{模擬兩數相加計算時間}";
         static void Main(string[] args)
         {
             //Process.GetCurrentProcess().ProcessorAffinity = (IntPtr)3;
@@ -30,14 +31,8 @@ namespace ApiPerformanceClient
 
             sw.Start();
             #region New HttpClient
-            // 用戶端使用 New HttpCliet 且 "同步等待" 結果，呼叫遠端同步 Web API
-            //UsingNewHttpClientSyncConnectSyncWebAPIAsync();
-
             // 用戶端使用 New HttpCliet 且 "非同步等待" 結果，呼叫遠端同步 Web API
             UsingNewHttpClientAsyncConnectSyncWebAPIAsync().Wait();
-
-            // 用戶端使用 New HttpCliet 且 "非同步等待" 結果，呼叫遠端非同步 Web API
-            //UsingNewHttpClientAsyncConnectAsyncWebAPIAsync().Wait();
             #endregion
 
             sw.Stop();
@@ -46,31 +41,8 @@ namespace ApiPerformanceClient
         }
 
         #region New HttpClient
-        public static void UsingNewHttpClientSyncConnectSyncWebAPIAsync()
-        {
-            APIEndPoint = $"https://{APIServiceName}/api/RemoteService/AddSync/8/9/{模擬兩數相加計算時間}";
-
-            for (int i = 0; i < 最多同時呼叫API數量; i++)
-            {
-                int idx = i;
-                HttpClient client = new HttpClient();
-                UsingNewHttpClientSyncConnectSyncWebAPIRequestAsync(client, idx);
-            }
-        }
-        private static void UsingNewHttpClientSyncConnectSyncWebAPIRequestAsync(HttpClient client, int idx)
-        {
-            DateTime begin = DateTime.Now;
-            Console.WriteLine($"Task{idx} Begin");
-            string result = client.GetStringAsync(
-                APIEndPoint).Result;
-            DateTime complete = DateTime.Now;
-            TimeSpan total = complete - begin;
-            Console.WriteLine($"Task{idx} Completed ({total.TotalMilliseconds} ms)");
-        }
-
         public static async Task UsingNewHttpClientAsyncConnectSyncWebAPIAsync()
         {
-            APIEndPoint = $"https://{APIServiceName}/api/RemoteService/AddSync/8/9/{模擬兩數相加計算時間}";
             List<Task> tasks = new List<Task>();
 
             for (int i = 0; i < 最多同時呼叫API數量; i++)
@@ -92,35 +64,7 @@ namespace ApiPerformanceClient
                     APIEndPoint);
                 DateTime complete = DateTime.Now;
                 TimeSpan total = complete - begin;
-                Console.WriteLine($"Task{idx} Completed ({total.TotalMilliseconds} ms)");
-            });
-        }
-
-        public static async Task UsingNewHttpClientAsyncConnectAsyncWebAPIAsync()
-        {
-            APIEndPoint = $"https://{APIServiceName}/api/RemoteService/AddAsync/8/9/{模擬兩數相加計算時間}";
-            List<Task> tasks = new List<Task>();
-
-            for (int i = 0; i < 最多同時呼叫API數量; i++)
-            {
-                int idx = i;
-                HttpClient client = new HttpClient();
-                tasks.Add(UsingNewHttpClientAsyncConnectAsyncWebAPIRequestAsync(client, idx));
-            }
-
-            await Task.WhenAll(tasks);
-        }
-        private static Task UsingNewHttpClientAsyncConnectAsyncWebAPIRequestAsync(HttpClient client, int idx)
-        {
-            return Task.Run(async () =>
-            {
-                DateTime begin = DateTime.Now;
-                Console.WriteLine($"Task{idx} Begin");
-                string result = await client.GetStringAsync(
-                    APIEndPoint);
-                DateTime complete = DateTime.Now;
-                TimeSpan total = complete - begin;
-                Console.WriteLine($"Task{idx} Completed ({total.TotalMilliseconds} ms)");
+                Console.WriteLine($"Task{idx} Completed ({(int)total.TotalMilliseconds} ms)\t{result}");
             });
         }
         #endregion

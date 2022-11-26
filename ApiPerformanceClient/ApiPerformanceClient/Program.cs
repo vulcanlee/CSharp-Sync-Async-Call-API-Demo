@@ -13,8 +13,8 @@ namespace ApiPerformanceClient
         // https://blazortw.azurewebsites.net/api/RemoteService/SetThreadPool/4/4/
         // https://localhost:7034/api/RemoteService/
         static string APIServiceName = "blazortw.azurewebsites.net";
-        static int 模擬兩數相加計算時間 = 3000;
-        static int 最多同時呼叫API數量 = 100;
+        static int 模擬兩數相加計算時間 = 10000;
+        static int 最多同時呼叫API數量 = 10;
 
         // 此 URL 是要連上 Azure 上的 Web API 測試端點
         static string APIEndPoint = $"https://{APIServiceName}/api/" +
